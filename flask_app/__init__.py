@@ -27,6 +27,8 @@ try:
     # Loads documents from JSON file into collection called 'data'
     if isinstance(raw, list): 
         collection.insert_many(raw)
+        print(raw)
+        sys.stdout.flush()
     else: 
         collection.insert_one(raw) 
 
