@@ -20,7 +20,7 @@ try:
 
     collection.drop()
     
-    app.elasticsearch.indices.delete('harvard', ignore=[400, 404])
+    # app.elasticsearch.indices.delete('harvard', ignore=[400, 404])
 
     # Load File
     with open('flask_app/harvard_dataverse.json') as raw_file:
@@ -38,44 +38,44 @@ try:
     # Checks how many documents have been loaded into MongoDB
     num_docs = collection.estimated_document_count()
 
-    # Pull from Mongo and dump into ES w/ bulk indexing
-    actions = []
-    for i in range(num_docs):
-        doc = res[i]
+    # # Pull from Mongo and dump into ES w/ bulk indexing
+    # actions = []
+    # for i in range(num_docs):
+    #     doc = res[i]
 
-        # Remove ID from MongoDB entry, so no duplicate IDs are given in elastic search index
-        doc.pop('_id')
+    #     # Remove ID from MongoDB entry, so no duplicate IDs are given in elastic search index
+    #     doc.pop('_id')
 
-        action = {
-            "_index": 'harvard',
-            "_source": json.dumps(doc)
-        }
-        actions.append(action)
+    #     action = {
+    #         "_index": 'harvard',
+    #         "_source": json.dumps(doc)
+    #     }
+    #     actions.append(action)
 
-    # Mapping that matches requisites provided by Dr. Wu
-    custom_map = {
-        "settings": {
-            "analysis": {
-                "normalizer": {
-                    "case_insensitive": {
-                        "type": "custom",
-                        "filter": ["lowercase"]
-                    }
-                }
-            }
-        },
-        "mappings": {
-            "properties": {
-                "funder.name": {
-                    "type": "keyword",
-                    "normalizer": "case_insensitive"		    }
+    # # Mapping that matches requisites provided by Dr. Wu
+    # custom_map = {
+    #     "settings": {
+    #         "analysis": {
+    #             "normalizer": {
+    #                 "case_insensitive": {
+    #                     "type": "custom",
+    #                     "filter": ["lowercase"]
+    #                 }
+    #             }
+    #         }
+    #     },
+    #     "mappings": {
+    #         "properties": {
+    #             "funder.name": {
+    #                 "type": "keyword",
+    #                 "normalizer": "case_insensitive"		    }
                                                 
-            }
-        }
-    }
+    #         }
+    #     }
+    # }
     
-    app.elasticsearch.indices.create(index='harvard', body=custom_map)
-    helpers.bulk(app.elasticsearch, actions, request_timeout=30)
+    # app.elasticsearch.indices.create(index='harvard', body=custom_map)
+    # helpers.bulk(app.elasticsearch, actions, request_timeout=30)
         
 except:
     print("Unexpected Error: ", sys.exc_info())
