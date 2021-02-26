@@ -15,7 +15,6 @@ app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
 app.mongo_client = MongoClient(app.config['MONGODB_URI'])
 
 try:
-    db = app.mongo_client['harvard_db']
     collection = db['data']
 
     collection.drop()
