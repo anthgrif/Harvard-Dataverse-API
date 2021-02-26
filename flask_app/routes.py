@@ -3,7 +3,6 @@ from flask_app.forms import *
 from flask_app import app
 from flask_app.elastic import *
 
-mongo_elastic()
 # Home page
 # Frontend in the file: 'flask_app/templates/index.html'
 @app.route('/')
