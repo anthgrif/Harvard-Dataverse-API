@@ -3,6 +3,7 @@ from config import Config
 from elasticsearch import Elasticsearch, helpers
 from pymongo import MongoClient
 import sys
+import json
 
 # Initialize Flask application
 app = Flask(__name__)
