@@ -34,7 +34,7 @@ try:
     res = collection.find()
 
     # Checks how many documents have been loaded into MongoDB
-    num_docs = 100
+    num_docs = collection.estimated_document_count()
 
     # Pull from Mongo and dump into ES w/ bulk indexing
     actions = []
