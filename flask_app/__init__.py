@@ -9,18 +9,23 @@ import json
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Initialize Elasticsearch w/ URL given by Heroku
 app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
     if app.config['ELASTICSEARCH_URL'] else None
 
+# Initialize MongoDB w/ URL given by Heroku
 app.mongo_client = MongoClient(app.config['MONGODB_URI'])
 db = app.mongo_client.harvard_db
 
 
 try:
+    # Open collection in 'harvard_db' titled 'data
     collection = db.data
 
+    # OPTIONAL: Delete any previous data submissions
     collection.drop()
     
+    # OPTIONAL: Delete any previous Elasticsearch index 'harvard'
     app.elasticsearch.indices.delete('harvard', ignore=[400, 404])
 
     # Load File
@@ -30,11 +35,11 @@ try:
     # Loads documents from JSON file into collection called 'data'
     collection.insert_many(raw)
 
-    #Finds all documents, assigns cursor to res
+    # Finds all documents, assigns cursor to res
     res = collection.find()
 
     # Checks how many documents have been loaded into MongoDB
-    num_docs = collection.estimated_document_count()
+    num_docs = collection.esimated_document_count()
 
     # Pull from Mongo and dump into ES w/ bulk indexing
     actions = []
