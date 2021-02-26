@@ -19,6 +19,10 @@ try:
     collection = db['data']
 
     collection.drop()
+    
+    # OPTIONAL: Delete index 'harvard'
+    if app.elasticsearch.indices.exists('harvard'):
+        app.elasticsearch.indices.delete('harvard')
 
     # Load File
     with open('flask_app/harvard_dataverse.json') as raw_file:
@@ -27,8 +31,6 @@ try:
     # Loads documents from JSON file into collection called 'data'
     if isinstance(raw, list): 
         collection.insert_many(raw)
-        print(raw)
-        sys.stdout.flush()
     else: 
         collection.insert_one(raw) 
 
@@ -73,10 +75,6 @@ try:
             }
         }
     }
-
-    # OPTIONAL: Delete index 'harvard'
-    if app.elasticsearch.indices.exists('harvard'):
-        app.elasticsearch.indices.delete('harvard')
     
     app.elasticsearch.indices.create(index='harvard', body=custom_map)
     helpers.bulk(app.elasticsearch, actions, request_timeout=30)
