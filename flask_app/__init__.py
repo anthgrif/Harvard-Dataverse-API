@@ -20,9 +20,7 @@ try:
 
     collection.drop()
     
-    # OPTIONAL: Delete index 'harvard'
-    if app.elasticsearch.indices.exists('harvard'):
-        app.elasticsearch.indices.delete('harvard')
+    app.elasticsearch.indices.delete('harvard', ignore=[400, 404])
 
     # Load File
     with open('flask_app/harvard_dataverse.json') as raw_file:
