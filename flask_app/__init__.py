@@ -12,5 +12,73 @@ app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
 
 app.mongo_client = MongoClient(app.config['MONGODB_URI'])
 
+try:
+    db = app.mongo_client['harvard_db']
+    collection = db['data']
+
+    collection.drop()
+
+    # Load File
+    with open('flask_app/harvard_dataverse.json') as raw_file:
+        raw = json.load(raw_file)
+
+    # Loads documents from JSON file into collection called 'data'
+    if isinstance(raw, list): 
+        collection.insert_many(raw)
+    else: 
+        collection.insert_one(raw) 
+
+    #Finds all documents, assigns cursor to res
+    res = collection.find()
+
+    # Checks how many documents have been loaded into MongoDB
+    num_docs = collection.estimated_document_count()
+
+    # Pull from Mongo and dump into ES w/ bulk indexing
+    actions = []
+    for i in range(num_docs):
+        doc = res[i]
+
+        # Remove ID from MongoDB entry, so no duplicate IDs are given in elastic search index
+        doc.pop('_id')
+
+        action = {
+            "_index": 'harvard',
+            "_source": json.dumps(doc)
+        }
+        actions.append(action)
+
+    # Mapping that matches requisites provided by Dr. Wu
+    custom_map = {
+        "settings": {
+            "analysis": {
+                "normalizer": {
+                    "case_insensitive": {
+                        "type": "custom",
+                        "filter": ["lowercase"]
+                    }
+                }
+            }
+        },
+        "mappings": {
+            "properties": {
+                "funder.name": {
+                    "type": "keyword",
+                    "normalizer": "case_insensitive"		    }
+                                                
+            }
+        }
+    }
+
+    # OPTIONAL: Delete index 'harvard'
+    if app.elasticsearch.indices.exists('harvard'):
+        app.elasticsearch.indices.delete('harvard')
+    
+    app.elasticsearch.indices.create(index='harvard', body=custom_map)
+    helpers.bulk(app.elasticsearch, actions, request_timeout=30)
+        
+except:
+    print("Unexpected Error: ", sys.exc_info())
+
 # Workaround for the circular import problem
 from flask_app import routes
