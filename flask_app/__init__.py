@@ -1,7 +1,8 @@
 from flask import Flask
 from config import Config
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, helpers
 from pymongo import MongoClient
+import sys
 
 # Initialize Flask application
 app = Flask(__name__)
