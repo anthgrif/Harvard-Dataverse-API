@@ -15,7 +15,7 @@ app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
 app.mongo_client = MongoClient(app.config['MONGODB_URI'])
 
 try:
-    collection = app.mongo_client['data']
+    collection = app.mongo_client.data
 
     collection.drop()
     
