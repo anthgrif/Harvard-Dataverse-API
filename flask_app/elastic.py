@@ -1,7 +1,5 @@
 from flask_app import app
 import json
-import sys
-from elasticsearch import Elasticsearch, helpers
 
 def searchByID(idNum, facet="funder.name"):
     # Look for exact match with what the user has submitted    
