@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+          <div class="col-lg-6">
+            <h1>Search By ID</h1>
+            <form action="" method="post" novalidate>
+                {{ formForID.hidden_tag() }}
+                <p>
+                    {{ formForID.id.label }}<br>
+                    {{ formForID.id(size=32) }}<br>
+                    {% for error in formForID.id.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>{{ formForID.submit1() }}</p>
+            </form>
+            {% if num_docs1 %}
+            <div>{{ num_docs1 }} document(s) found</div>
+            {% else %}
+            <div>0 documents found</div>
+            {% endif %}
+            <div id="accordion">
+              {% for doc in docs1 %}
+              <div class="card">
+                <div class="card-header" id="{{loop.index}}">
+                  <h5 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{loop.index}}" aria-expanded="true" aria-controls="collapse{{loop.index}}">
+                      Document #{{loop.index}}
+                    </button>
+                  </h5>
+                </div>
+            
+                <div id="collapse{{loop.index}}" class="collapse show" aria-labelledby="heading{{loop.index}}" data-parent="#accordion">
+                  <div class="card-body">
+                    {{doc}}
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+        </div>
+          <div class="col-lg-6">
+            <h1>Search By Field and Value</h1>
+
+            <form action="" method="post" novalidate>
+                {{ formForField.hidden_tag() }}
+                <p>
+                    {{ formForField.field.label }}<br>
+                    {{ formForField.field(size=32) }}<br>
+                    {% for error in formForField.field.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ formForField.val.label }}<br>
+                    {{ formForField.val(size=32) }}<br>
+                    {% for error in formForField.val.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>{{ formForField.submit2() }}</p>
+            </form>
+            {% if num_docs2 %}
+            <div>{{ num_docs2 }} document(s) found</div>
+            {% else %}
+            <div>0 documents found</div>
+            {% endif %}
+            <div id="accordion">
+              {% for doc in docs2 %}
+                {% if loop.index > 1 %}
+                  <div class="card">
+                    <div class="card-header" id="heading{{loop.index}}">
+                      <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse{{loop.index}}" aria-expanded="false" aria-controls="collapse{{loop.index}}">
+                          Document #{{loop.index}}
+                        </button>
+                      </h5>
+                    </div>
+                
+                    <div id="collapse{{loop.index}}" class="collapse" aria-labelledby="heading{{loop.index}}" data-parent="#accordion">
+                      <div class="card-body">
+                        {{doc}}
+                      </div>
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="card">
+                    <div class="card-header" id="heading{{loop.index}}">
+                      <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{loop.index}}" aria-expanded="true" aria-controls="collapse{{loop.index}}">
+                          Document #{{loop.index}}
+                        </button>
+                      </h5>
+                    </div>
+                
+                    <div id="collapse{{loop.index}}" class="collapse show" aria-labelledby="heading{{loop.index}}" data-parent="#accordion">
+                      <div class="card-body">
+                        {{doc}}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+{% endblock %} 
