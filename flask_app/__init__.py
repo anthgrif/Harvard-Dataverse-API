@@ -15,7 +15,8 @@ app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
 app.mongo_client = MongoClient(app.config['MONGODB_URI'])
 db = app.mongo_client.harvard_db
 
-def loadDB():
+
+try:
     collection = db.data
 
     collection.drop()
@@ -27,7 +28,7 @@ def loadDB():
         raw = json.load(raw_file)
 
     # Loads documents from JSON file into collection called 'data'
-    collection.insert_many(raw)
+    collection.insert(raw)
 
     #Finds all documents, assigns cursor to res
     res = collection.find()
@@ -77,9 +78,5 @@ def loadDB():
 except:
     print("Unexpected Error: ", sys.exc_info())
 
-if __name__ == '__main__':
-    loadDB()
-    app.run()
-    
 # Workaround for the circular import problem
 from flask_app import routes
